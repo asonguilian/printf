@@ -22,7 +22,10 @@ int _putchar(char c)
  */
 int print_char(va_list args)
 {
-	return (_putchar(va_arg(args, int)));
+	char c;
+
+	c = va_arg(args, int);
+	return (_putchar(c));
 }
 
 /**
@@ -47,28 +50,16 @@ int print_string(va_list args)
 }
 
 /**
- * print_int - prints an integer
+ * print_percent - prints a percent sign
  * @args: arguments list
  *
  * Return: number of characters printed
  */
-int print_int(va_list args)
+int print_percent(va_list args)
 {
-	int n, div, len = 0;
+	(void)args;
 
-	n = va_arg(args, int);
-	if (n < 0)
-	{
-		len += _putchar('-');
-		n = -n;
-	}
-	for (div = 1; n / div > 9; div *= 10)
-		;
-	for (; div >= 1; div /= 10)
-	{
-		len += _putchar(((n / div) % 10) + '0');
-	}
-	return (len);
+	return (_putchar('%'));
 }
 
 /**
@@ -100,30 +91,35 @@ int _printf(const char *format, ...)
 		if (format[i] == '%')
 		{
 			i++;
-			if (format[i] == '%')
+			if (format[i] == '\0')
+			{
+				_putchar('%');
+				len++;
+				break;
+			}
+			else if (format[i] == '%')
 			{
 				_putchar('%');
 				len++;
 				continue;
 			}
 			switch (format[i])
-				{
+			{
 				case 'c':
 					print_func = &print_char;
 					break;
 				case 's':
 					print_func = &print_string;
 					break;
-				case 'i':
-				case 'd':
-					print_func = &print_int;
+				case '%':
+					print_func = &print_percent;
 					break;
 				default:
 					_putchar('%');
 					_putchar(format[i]);
 					len += 2;
 					continue;
-				}
+			}
 			len += print_func(args);
 		}
 		else
