@@ -1,93 +1,138 @@
-#include "main.h"
+#include <stdarg.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 /**
- * print_char - prints a single chaacter from a va_list argument
- * @args: va_list argument from which character to be printed is taken
- * Return: 1  (since only one character is printed)
+ * _putchar - writes a character to stdout
+ * @c: The character to print
+ *
+ * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
  */
-int print_char(va_list *args)
+int _putchar(char c)
 {
-	char c = va_arg(*args, int);
-
-	write(1, &c, 1);
-	return (1);
+	return (write(1, &c, 1));
 }
-/**
- * print_string - prints a string from a va_list argument
- * @args: va_list argument from which string is taken
- * Return: the number of characters printed
- */
-int print_string(va_list *args)
-{
-	char *s = va_arg(*args, char *);
-	int count = 0;
 
-	if (s == NULL)
+/**
+ * print_char - prints a character
+ * @args: arguments list
+ *
+ * Return: number of characters printed
+ */
+int print_char(va_list args)
+{
+	return (_putchar(va_arg(args, int)));
+}
+
+/**
+ * print_string - prints a string
+ * @args: arguments list
+ *
+ * Return: number of characters printed
+ */
+int print_string(va_list args)
+{
+	char *str;
+	int i, len;
+
+	str = va_arg(args, char *);
+	if (str == NULL)
+		str = "(null)";
+	for (len = 0; str[len] != '\0'; len++)
+		;
+	for (i = 0; i < len; i++)
+		_putchar(str[i]);
+	return (len);
+}
+
+/**
+ * print_int - prints an integer
+ * @args: arguments list
+ *
+ * Return: number of characters printed
+ */
+int print_int(va_list args)
+{
+	int n, div, len = 0;
+
+	n = va_arg(args, int);
+	if (n < 0)
 	{
-		s = "(null)";
+		len += _putchar('-');
+		n = -n;
 	}
-	count = write(1, s, _strlen(s));
-	return (count);
-}
-/**
- * print_percent - prints the character %
- * @args: va_list argument which is unused in this function
- * Return: 1 (since only one character is printed)
- */
-int print_percent(va_list *args __attribute__((unused)))
-{
-	char c = '%';
-
-	write(1, &c, 1);
-	return (1);
+	for (div = 1; n / div > 9; div *= 10)
+		;
+	for (; div >= 1; div /= 10)
+	{
+		len += _putchar(((n / div) % 10) + '0');
+	}
+	return (len);
 }
 
 /**
- * _printf - produces output according to a foramt
- * @format: character string that contains directive for printing
- * Return: number of characters printed excluding the null bute terminator
+ * print_func_t - function pointer type for print functions
+ * @args: arguments list
+ *
+ * Return: number of characters printed
  */
+typedef int (*print_func_t)(va_list args);
 
+/**
+ * _printf - prints output according to a format.
+ * @format: a string containing zero or more directives.
+ *
+ * Return: the number of characters printed
+ * (excluding the null byte used to end
+ * output to strings), or a negative value if an error occurred.
+ */
 int _printf(const char *format, ...)
 {
-	int count = 0; /*count characters printed*/
 	va_list args;
+	int i, len = 0;
+	print_func_t print_func;
 
 	va_start(args, format);
-	while (*format)
+
+	for (i = 0; format[i] != '\0'; i++)
 	{
-		if (*format == '%')
+		if (format[i] == '%')
 		{
-			++format;
-			if (*format == '\0')
+			i++;
+			if (format[i] == '%')
 			{
-				if (count == 0)
-					return (-1);
-				write(1, "%", 1), ++count;
-				break;
+				_putchar('%');
+				len++;
+				continue;
 			}
-			switch (*format)
-			{
+			switch (format[i])
+				{
 				case 'c':
-					count += print_char(&args);
+					print_func = &print_char;
 					break;
 				case 's':
-					count += print_string(&args);
+					print_func = &print_string;
 					break;
-				case '%':
-					count += print_percent(&args);
+				case 'i':
+				case 'd':
+					print_func = &print_int;
 					break;
 				default:
-					write(1, "%", 1), write(1, format, 1);
-					count += 2;
-			}
-			++format;
+					_putchar('%');
+					_putchar(format[i]);
+					len += 2;
+					continue;
+				}
+			len += print_func(args);
 		}
 		else
 		{
-			write(1, format, 1), ++count, ++format;
+			_putchar(format[i]);
+			len++;
 		}
 	}
+
 	va_end(args);
-	return (count);
+	return (len);
 }
