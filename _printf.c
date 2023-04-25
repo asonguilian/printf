@@ -26,12 +26,7 @@ int print_string(va_list *args)
 	{
 		s = "(null)";
 	}
-	while (*s)
-	{
-		write(1, s, 1);
-		++s;
-		++count;
-	}
+	count = write(1, s, _strlen(s));
 	return (count);
 }
 /**
