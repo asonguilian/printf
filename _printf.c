@@ -50,8 +50,7 @@ int print_percent(va_list *args __attribute__((unused)))
 int print_int(va_list *args)
 {
 	int val = va_arg(*args, int);
-	char buffer[20];
-	/*maximum number of digits for a 64bit int +sign and null terminator*/
+	char buffer[20];/*max num of digits for 64 bits int +sign */
 	int i = 0; /*index of next character to write to buffer*/
 	int negative = 0; /* flag to denote sign of the integer*/
 	int count = 0;
@@ -59,9 +58,8 @@ int print_int(va_list *args)
 	if (val < 0)
 	{
 		negative = 1;
-		if (val == INT_MIN)
+		if (val == INT_MIN)/*handle integr overflow*/
 		{
-			/* handle integer overflow */
 			write(1, "-2147483648", 11);
 			return (11);
 		}
@@ -80,13 +78,11 @@ int print_int(va_list *args)
 		buffer[i++] = val % 10 + '0';
 		val /= 10;
 	} while (val > 0);
-	/* append the sign if integer is negative */
-	if (negative)
+	if (negative)/*append sign if integer is -ve*/
 	{
 		buffer[i++] = '-';
 	}
-	/* write the string in reverse order */
-	while (i > 0)
+	while (i > 0)/* write string in reverse order*/
 	{
 		write(1, &buffer[--i], 1);
 		++count;
@@ -106,7 +102,6 @@ int _printf(const char *format, ...)
 	print_func_t print_func;
 
 	va_start(args, format);
-
 	while (*format)
 	{
 		if (*format == '%')
