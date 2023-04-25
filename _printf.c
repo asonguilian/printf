@@ -9,8 +9,13 @@ int print_char(va_list *args)
 {
 	char c = va_arg(*args, int);
 
-	write(1, &c, 1);
-	return (1);
+	if (c >= 32 && c < 127)
+	{
+		write(1, &c, 1);
+		return (1);
+	}
+	else
+		return (0);
 }
 /**
  * print_string - prints a string from a va_list argument
