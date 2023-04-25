@@ -53,7 +53,6 @@ int _printf(const char *format, ...)
 {
 	int count = 0; /*count characters printed*/
 	va_list args;
-	print_func_t print_func;
 
 	va_start(args, format);
 	while (*format)
@@ -61,40 +60,33 @@ int _printf(const char *format, ...)
 		if (*format == '%')
 		{
 			++format;
-			if (*format =='\0')
+			if (*format == '\0')
 			{
 				if (count == 0)
 					return (-1);
-				write(1, "%", 1);
-				++count;
+				write(1, "%", 1), ++count;
 				break;
 			}
 			switch (*format)
 			{
 				case 'c':
-					print_func = &print_char;
+					count += print_char(&args);
 					break;
 				case 's':
-					print_func = &print_string;
+					count += print_string(&args);
 					break;
 				case '%':
-					print_func = &print_percent;
+					count += print_percent(&args);
 					break;
 				default:
-					write(1, "%", 1);
-					write(1, format, 1);
-					count += 2;
-					++format;
-					continue;
+					write(1, "%", 1), write(1, format, 1);
+					count += 2, ++format, continue;
 			}
 			++format;
-			count += print_func(&args);
 		}
 		else
 		{
-			write(1, format, 1);
-			++count;
-			++format;
+			write(1, format, 1), ++count, ++format;
 		}
 	}
 	va_end(args);
