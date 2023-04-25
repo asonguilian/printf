@@ -9,13 +9,8 @@ int print_char(va_list *args)
 {
 	char c = va_arg(*args, int);
 
-	if (c >= 32 && c < 127)
-	{
-		write(1, &c, 1);
-		return (1);
-	}
-	else
-		return (0);
+	write(1, &c, 1);
+	return (1);
 }
 /**
  * print_string - prints a string from a va_list argument
@@ -71,8 +66,8 @@ int _printf(const char *format, ...)
 			++format;
 			if (*format == '\0')
 			{
-				if (count == 0)
-					return (-1);
+			/*	if (count == 0)
+					return (-1);*/
 				write(1, "%", 1), ++count;
 				break;
 			}
