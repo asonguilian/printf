@@ -66,8 +66,8 @@ int _printf(const char *format, ...)
 			++format;
 			if (*format == '\0')
 			{
-			/*	if (count == 0)
-					return (-1);*/
+				if (count == 0)
+					return (0);
 				write(1, "%", 1), ++count;
 				break;
 			}
