@@ -8,9 +8,32 @@
 
 int _strlen(char *s)
 {
-	int count = 0;
+    int i = 0;
 
-	while (*(s + count) != '\0')
-		count++;
-	return (count);
+    while (s[i] != '\0')
+    {
+        i++;
+    }
+
+    return (i);
+}
+
+/**
+ * _strrev - reverses a string in place
+ * @s: string to reverse
+ * Return: pointer to the reversed string
+ */
+char *_strrev(char *s)
+{
+	int i, j;
+	char t;
+
+	for (i = 0, j = _strlen(s) - 1; i < j; i++, j--)
+	{
+		t = s[i];
+		s[i] = s[j];
+		s[j] = t;
+	}
+
+	return s;
 }
