@@ -1,138 +1,91 @@
-#include <stdarg.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include "main.h"
 
 /**
- * _putchar - writes a character to stdout
- * @c: The character to print
- *
- * Return: On success 1.
- * On error, -1 is returned, and errno is set appropriately.
+ * print_char - prints a single chaacter from a va_list argument
+ * @args: va_list argument from which character to be printed is taken
+ * Return: 1  (since only one character is printed)
  */
-int _putchar(char c)
+int print_char(va_list *args)
 {
-	return (write(1, &c, 1));
+	char c = va_arg(*args, int);
+	int count;
+
+	count = write(1, &c, 1);
+	return (count);
 }
-
 /**
- * print_char - prints a character
- * @args: arguments list
- *
- * Return: number of characters printed
+ * print_string - prints a string from a va_list argument
+ * @args: va_list argument from which string is taken
+ * Return: the number of characters printed
  */
-int print_char(va_list args)
+int print_string(va_list *args)
 {
-	int c = va_arg(args, int);
-	return (_putchar(c));
-}
+	char *s = va_arg(*args, char *);
+	int count = 0;
 
-/**
- * print_string - prints a string
- * @args: arguments list
- *
- * Return: number of characters printed
- */
-int print_string(va_list args)
-{
-	char *str;
-	int i, len;
-
-	str = va_arg(args, char *);
-	if (str == NULL)
-		str = "(null)";
-	for (len = 0; str[len] != '\0'; len++)
-		;
-	for (i = 0; i < len; i++)
-		_putchar(str[i]);
-	return (len);
-}
-
-/**
- * print_int - prints an integer
- * @args: arguments list
- *
- * Return: number of characters printed
- */
-int print_int(va_list args)
-{
-	int n, div, len = 0;
-
-	n = va_arg(args, int);
-	if (n < 0)
+	if (s == NULL)
 	{
-		len += _putchar('-');
-		n = -n;
+		s = "(null)";
 	}
-	for (div = 1; n / div > 9; div *= 10)
-		;
-	for (; div >= 1; div /= 10)
-	{
-		len += _putchar(((n / div) % 10) + '0');
-	}
-	return (len);
+	count = write(1, s, _strlen(s));
+	return (count);
+}
+/**
+ * print_percent - prints the character %
+ * @args: va_list argument which is unused in this function
+ * Return: 1 (since only one character is printed)
+ */
+int print_percent(va_list *args __attribute__((unused)))
+{
+	char c = '%';
+
+	write(1, &c, 1);
+	return (1);
 }
 
 /**
- * print_func_t - function pointer type for print functions
- * @args: arguments list
- *
- * Return: number of characters printed
+ * _printf - produces output according to a foramt
+ * @format: character string that contains directive for printing
+ * Return: number of characters printed excluding the null bute terminator
  */
-typedef int (*print_func_t)(va_list args);
 
-/**
- * _printf - prints output according to a format.
- * @format: a string containing zero or more directives.
- *
- * Return: the number of characters printed (excluding the null byte used to end
- * output to strings), or a negative value if an error occurred.
- */
 int _printf(const char *format, ...)
 {
+	int count = 0; /*count characters printed*/
 	va_list args;
-	int i, len = 0;
-	print_func_t print_func;
 
 	va_start(args, format);
-
-	for (i = 0; format[i] != '\0'; i++)
+	while (*format)
 	{
-		if (format[i] == '%')
+		if (*format == '%')
 		{
-			i++;
-			if (format[i] == '%')
+			++format;
+			if (*format == '\0')
 			{
-				_putchar('%');
-				len++;
-				continue;
+				return (-1);
 			}
-			switch (format[i])
-				{
+			switch (*format)
+			{
 				case 'c':
-					print_func = &print_char;
+					count += print_char(&args);
 					break;
 				case 's':
-					print_func = &print_string;
+					count += print_string(&args);
 					break;
-				case 'i':
-				case 'd':
-					print_func = &print_int;
+				case '%':
+					count += print_percent(&args);
 					break;
 				default:
-					_putchar('%');
-					_putchar(format[i]);
-					len += 2;
-					continue;
-				}
-			len += print_func(args);
+					write(1, "%", 1), write(1, format, 1);
+					count += 2;
+			}
+			++format;
 		}
 		else
 		{
-			_putchar(format[i]);
-			len++;
+			write(1, format, 1), ++count, ++format;
 		}
 	}
-
 	va_end(args);
-	return (len);
+	return (count);
 }
