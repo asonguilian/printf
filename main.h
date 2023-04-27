@@ -23,4 +23,9 @@ int _printf(const char *format, ...);
 int _strlen(char *);
 char *_strrev(char *s);
 int print_binary(va_list *args);
+int print_unsigned_integer(va_list *args);
+int print_octal(va_list *args);
+
+int print_hexadecimal(va_list *args);
+int print_hexadecimal_uppercase(va_list *args);
 #endif
