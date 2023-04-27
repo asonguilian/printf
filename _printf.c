@@ -43,11 +43,11 @@ int print_percent(va_list *args __attribute__((unused)))
 	return (1);
 }
 /**
-  * print_integr -prints an integr from va_list argument
+  * print_integer -prints an integr from va_list argument
   * @args: va_list argument from which integer is taken
   * Return: the number of characters printed
   */
-int print_integr(va_list *args)
+int print_integer(va_list *args)
 {
 	int n = va_arg(*args, int);
 	int count = 0, negative = 0, i = 0;
@@ -115,6 +115,10 @@ int _printf(const char *format, ...)
 					break;
 				case '%':
 					count += print_percent(&args);
+					break;
+				case 'd':
+				case 'i':
+					count += print_integer(&args);
 					break;
 				default:
 					write(1, "%", 1), write(1, format, 1);
