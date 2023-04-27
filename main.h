@@ -22,4 +22,5 @@ int _printf(const char *format, ...);
 
 int _strlen(char *);
 char *_strrev(char *s);
+int print_binary(va_list *args);
 #endif

@@ -96,7 +96,6 @@ int print_integer(va_list *args)
 	free(buffer);
 	return (count);
 }
-
 /**
  * _printf - produces output according to a foramt
  * @format: character string that contains directive for printing
@@ -134,6 +133,9 @@ int _printf(const char *format, ...)
 				case 'd':
 				case 'i':
 					count += print_integer(&args);
+					break;
+				case 'b':
+					count += print_binary(&args);
 					break;
 				default:
 					write(1, "%", 1), write(1, format, 1);
