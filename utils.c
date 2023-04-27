@@ -8,14 +8,13 @@
 
 int _strlen(char *s)
 {
-    int i = 0;
+	int i = 0;
 
-    while (s[i] != '\0')
-    {
-        i++;
-    }
-
-    return (i);
+	while (s[i] != '\0')
+	{
+		i++;
+	}
+	return (i);
 }
 
 /**
@@ -26,14 +25,14 @@ int _strlen(char *s)
 char *_strrev(char *s)
 {
 	int i, j;
-	char t;
+	char temp;
 
 	for (i = 0, j = _strlen(s) - 1; i < j; i++, j--)
 	{
-		t = s[i];
+		temp = s[i];
 		s[i] = s[j];
-		s[j] = t;
+		s[j] = temp;
 	}
 
-	return s;
+	return (s);
 }
