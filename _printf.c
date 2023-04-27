@@ -50,7 +50,8 @@ int print_percent(va_list *args __attribute__((unused)))
 int print_integer(va_list *args)
 {
 	int n = va_arg(*args, int);
-	int count = 0, negative = 0, i = 0;
+	int count = 0, negative = 0, i = 0, digits = 0;
+	long int temp, value;
 	char *buffer;
 
 	if (n == 0)
@@ -58,26 +59,40 @@ int print_integer(va_list *args)
 		count += write(1, "0", 1);
 		return (count);
 	}
+	if (n == INT_MIN)
+	{
+		buffer = "-2147483648";
+		count = write(1, buffer, 11);
+		return (count);
+	}
+	value = n;
 	if (n < 0)
 	{
 		negative = 1;
 		n = -n;
+		value = -value;
+	}
+	temp = value;
+	while (temp != 0)
+	{
+		digits++;
+		temp /= 10;
 	}
 	if (negative)
-		i++;
-	buffer = (char *)malloc((i + 1) * sizeof(char));
+		digits++;
+	buffer = (char *)malloc((digits + 1) * sizeof(char));
 	if (buffer == NULL)
 		return (-1);
-	i = 0;
-	while (n != 0)
+	i = digits - 1;
+	while (value != 0)
 	{
-		buffer[i++] = (n % 10) + '0';
-		n /= 10;
+		buffer[i--] = (value % 10) + '0';
+		value /= 10;
 	}
 	if (negative)
-		buffer[i++] = '-';
-	_strrev(buffer);
-	count = write(1, buffer, _strlen(buffer));
+		buffer[i] = '-';
+	buffer[digits] = '\0';
+	count = write(1, buffer, digits);
 	free(buffer);
 	return (count);
 }
